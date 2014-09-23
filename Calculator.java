@@ -8,23 +8,37 @@ public class Calculator {
     public static class CalculatorVisitor extends AbstractParseTreeVisitor<Integer> implements CALCVisitor<Integer> {
         @Override
         public Integer visitExpr(CALCParser.ExprContext context) {
-            int right = visit(context.factor());
+            int left = visit(context.factor());
             if (context.expr() != null) {
-                int left = visit(context.expr());
-                return left + right;
+                int right = visit(context.expr());
+                switch (context.op.getText()) {
+                    case "+":
+                        return left + right;
+                    case "-":
+                        return left - right;
+                    default:
+                        throw new IllegalStateException("Missing operand: " + context.op.getText());
+                }
             } else {
-                return right;
+                return left;
             }
         }
 
         @Override
         public Integer visitFactor(CALCParser.FactorContext context) {
-            int right = visit(context.term());
+            int left = visit(context.term());
             if (context.factor() != null) {
-                int left = visit(context.factor());
-                return left * right;
+                int right = visit(context.factor());
+                switch (context.op.getText()) {
+                    case "*":
+                        return left * right;
+                    case "/":
+                        return left / right;
+                    default:
+                        throw new IllegalStateException("Missing operand: " + context.op.getText());
+                }
             } else {
-                return right;
+                return left;
             }
         }
 

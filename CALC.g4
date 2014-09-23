@@ -1,8 +1,8 @@
 grammar CALC;
 
-expr : factor '+' expr | factor;
+expr : factor op=('+'|'-') expr | factor;
 
-factor : term '*' factor | term;
+factor : term op=('*'|'/') factor | term;
 
 term : '(' expr ')' | NUMBER;
 
