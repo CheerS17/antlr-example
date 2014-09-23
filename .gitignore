@@ -1,0 +1,6 @@
+# Ignore all the antlr generated files.
+CALC*
+!CALC.g4
+
+# Ignore compiled java files.
+*.class
