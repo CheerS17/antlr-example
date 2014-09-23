@@ -9,7 +9,7 @@ public class Calculator {
         @Override
         public Integer visitExpr(CALCParser.ExprContext context) {
             int right = visit(context.factor());
-            if (!context.expr().isEmpty()) {
+            if (context.expr() != null) {
                 int left = visit(context.expr());
                 return left + right;
             } else {
@@ -20,7 +20,7 @@ public class Calculator {
         @Override
         public Integer visitFactor(CALCParser.FactorContext context) {
             int right = visit(context.term());
-            if (!context.factor().isEmpty()) {
+            if (context.factor() != null) {
                 int left = visit(context.factor());
                 return left * right;
             } else {
@@ -30,7 +30,7 @@ public class Calculator {
 
         @Override
         public Integer visitTerm(CALCParser.TermContext context) {
-            if (!context.expr().isEmpty()) {
+            if (context.expr() != null) {
                 return visit(context.expr());
             } else {
                 return Integer.valueOf(context.NUMBER().getText());
