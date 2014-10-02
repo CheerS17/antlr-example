@@ -57,6 +57,7 @@ public class Calculator {
         CalculatorVisitor visitor = new CalculatorVisitor();
 
         Node ast = visitor.visit(tree);
+        System.err.println(ast);
         try {
             System.out.println(Eval.evaluate(ast));
         } catch (Eval.EvalError e) {
