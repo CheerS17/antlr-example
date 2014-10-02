@@ -52,6 +52,9 @@ public class Node<T> {
 
     @Override
     public String toString() {
+        if (kids.size() == 0) {
+            return label.toString();
+        }
         StringBuilder sb = new StringBuilder();
         for (Node kid : kids) {
             sb.append(" ");

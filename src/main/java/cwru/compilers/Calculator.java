@@ -7,49 +7,38 @@ import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
 public class Calculator {
 
-    public static class CalculatorVisitor extends AbstractParseTreeVisitor<Integer> implements CALCVisitor<Integer> {
+    public static class CalculatorVisitor
+      extends AbstractParseTreeVisitor<Node>
+      implements CALCVisitor<Node> {
+
         @Override
-        public Integer visitExpr(CALCParser.ExprContext context) {
-            int left = visit(context.factor());
+        public Node visitExpr(CALCParser.ExprContext context) {
+            Node term = visit(context.term());
             if (context.expr() != null) {
-                int right = visit(context.expr());
-                switch (context.op.getText()) {
-                    case "+":
-                        return left + right;
-                    case "-":
-                        return left - right;
-                    default:
-                        throw new IllegalStateException("Missing operand: " + context.op.getText());
-                }
-            } else {
-                return left;
+                return (new Node<String>(context.op.getText()))
+                          .addkid(visit(context.expr()))
+                          .addkid(term);
             }
+            return term;
         }
 
         @Override
-        public Integer visitFactor(CALCParser.FactorContext context) {
-            int left = visit(context.term());
-            if (context.factor() != null) {
-                int right = visit(context.factor());
-                switch (context.op.getText()) {
-                    case "*":
-                        return left * right;
-                    case "/":
-                        return left / right;
-                    default:
-                        throw new IllegalStateException("Missing operand: " + context.op.getText());
-                }
-            } else {
-                return left;
+        public Node visitTerm(CALCParser.TermContext context) {
+            Node factor = visit(context.factor());
+            if (context.term() != null) {
+                return (new Node<String>(context.op.getText()))
+                          .addkid(visit(context.term()))
+                          .addkid(factor);
             }
+            return factor;
         }
 
         @Override
-        public Integer visitTerm(CALCParser.TermContext context) {
+        public Node visitFactor(CALCParser.FactorContext context) {
             if (context.expr() != null) {
                 return visit(context.expr());
             } else {
-                return Integer.valueOf(context.NUMBER().getText());
+                return new Node<Integer>(Integer.valueOf(context.NUMBER().getText()));
             }
         }
     }

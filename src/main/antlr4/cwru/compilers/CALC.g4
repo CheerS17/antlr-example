@@ -4,11 +4,11 @@ grammar CALC;
 package cwru.compilers;
 }
 
-expr : factor op=('+'|'-') expr | factor;
+expr : expr op=('+'|'-') term | term;
 
-factor : term op=('*'|'/') factor | term;
+term : term op=('*'|'/') factor | factor;
 
-term : '(' expr ')' | NUMBER;
+factor : '(' expr ')' | NUMBER;
 
 NUMBER : [0-9]+;
 
