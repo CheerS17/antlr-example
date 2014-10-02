@@ -46,7 +46,7 @@ public class Calculator {
     public static void main(String[] args) throws Exception {
         if (args.length != 1) {
             System.out.println("Expects exactly one expression");
-            return;
+            System.exit(1);
         }
 
         ANTLRInputStream input = new ANTLRInputStream(args[0]);
@@ -56,6 +56,12 @@ public class Calculator {
         ParseTree tree = parser.expr();
         CalculatorVisitor visitor = new CalculatorVisitor();
 
-        System.out.println(visitor.visit(tree));
+        Node ast = visitor.visit(tree);
+        try {
+            System.out.println(Eval.evaluate(ast));
+        } catch (Eval.EvalError e) {
+            System.err.println(e);
+            System.exit(2);
+        }
     }
 }
