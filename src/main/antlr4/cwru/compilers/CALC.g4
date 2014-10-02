@@ -4,6 +4,8 @@ grammar CALC;
 package cwru.compilers;
 }
 
+start : expr EOF;
+
 expr : expr op=('+'|'-') term | term;
 
 term : term op=('*'|'/') factor | factor;

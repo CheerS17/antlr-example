@@ -2,6 +2,7 @@ package cwru.compilers;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
@@ -10,6 +11,11 @@ public class Calculator {
     public static class CalculatorVisitor
       extends AbstractParseTreeVisitor<Node>
       implements CALCVisitor<Node> {
+
+        @Override
+        public Node visitStart(CALCParser.StartContext context) {
+            return visit(context.expr());
+        }
 
         @Override
         public Node visitExpr(CALCParser.ExprContext context) {
@@ -51,18 +57,28 @@ public class Calculator {
 
         ANTLRInputStream input = new ANTLRInputStream(args[0]);
         CALCLexer lexer = new CALCLexer(input);
+        lexer.addErrorListener(new ExceptionErrorListener());
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         CALCParser parser = new CALCParser(tokens);
-        ParseTree tree = parser.expr();
-        CalculatorVisitor visitor = new CalculatorVisitor();
+        parser.addErrorListener(new ExceptionErrorListener());
 
+        ParseTree tree = null;
+        try {
+            tree = parser.expr();
+        } catch (Exception e) {
+            System.err.println("Parsing failed");
+            System.exit(2);
+        }
+
+        CalculatorVisitor visitor = new CalculatorVisitor();
         Node ast = visitor.visit(tree);
         System.err.println(ast);
+
         try {
             System.out.println(Eval.evaluate(ast));
         } catch (Eval.EvalError e) {
             System.err.println(e);
-            System.exit(2);
+            System.exit(3);
         }
     }
 }
